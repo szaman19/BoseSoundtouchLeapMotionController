@@ -3,6 +3,7 @@ import socket
 
 import xml.etree.ElementTree as ET
 
+IP_ADDRESS = "http://172.20.10.6:8090/"
 class SoundInterface:
 
 	def upVolume(curVolume):
@@ -13,28 +14,28 @@ class SoundInterface:
 		newVol = curVolume - 5
 		return "<volume>"+str(newVol)+"</volume>"
 	def nextSong():
-		commandOne = requests.post('http://172.20.10.6:8090/key',"<key state=\"press\" sender=\"Gabbo\">NEXT_TRACK</key>")
-		commandTwo = requests.post('http://172.20.10.6:8090/key',"<key state=\"release\" sender=\"Gabbo\">NEXT_TRACK</key>")
+		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">NEXT_TRACK</key>")
+		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">NEXT_TRACK</key>")
 
 		#"<key state=\"release\" sender=\"Gabbo\">NEXT_TRACK</key>"
 	def playSong():
-		commandOne = requests.post('http://172.20.10.6:8090/key',"<key state=\"press\" sender=\"Gabbo\">PLAY</key>")
-		commandTwo = requests.post('http://172.20.10.6:8090/key',"<key state=\"release\" sender=\"Gabbo\">PLAY</key>")
+		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">PLAY</key>")
+		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">PLAY</key>")
 
 	def pauseSong():
-		commandOne = requests.post('http://172.20.10.6:8090/key',"<key state=\"press\" sender=\"Gabbo\">PAUSE</key>")
-		commandTwo = requests.post('http://172.20.10.6:8090/key',"<key state=\"release\" sender=\"Gabbo\">PAUSE</key>")
+		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">PAUSE</key>")
+		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">PAUSE</key>")
 
 	def stopSong():
-		commandOne = requests.post('http://172.20.10.6:8090/key',"<key state=\"press\" sender=\"Gabbo\">STOP</key>")
-		commandTwo = requests.post('http://172.20.10.6:8090/key',"<key state=\"release\" sender=\"Gabbo\">STOP</key>")
+		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">STOP</key>")
+		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">STOP</key>")
 
 	def turnOff():
-		commandOne = requests.post('http://172.20.10.6:8090/key',"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
-		commandTwo = requests.post('http://172.20.10.6:8090/key',"<key state=\"release\" sender=\"Gabbo\">POWER</key>")
+		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
+		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">POWER</key>")
 	
 	def listSources():
-		commandOne = requests.get('http://172.20.10.6:8090/sources')#,"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
+		commandOne = requests.get(IP_ADDRESS+'sources')#,"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
 		return commandOne.text 
 
 
