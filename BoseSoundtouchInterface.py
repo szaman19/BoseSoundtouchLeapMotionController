@@ -6,12 +6,12 @@ import xml.etree.ElementTree as ET
 IP_ADDRESS = "http://172.20.10.6:8090/"
 class SoundInterface:
 
-	def upVolume(curVolume):
-		newVol = curVolume + 10
+	def upVolume(self):
+		newVol = self.curVolume + 10
 		return "<volume>"+str(newVol)+"</volume>"
 
-	def downVolume(curVolume):
-		newVol = curVolume - 5
+	def downVolume(self):
+		newVol = self.curVolume - 5
 		return "<volume>"+str(newVol)+"</volume>"
 	def nextSong():
 		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">NEXT_TRACK</key>")
@@ -37,6 +37,10 @@ class SoundInterface:
 	def listSources():
 		commandOne = requests.get(IP_ADDRESS+'sources')#,"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
 		return commandOne.text 
+	def __init__(self):
+		self.curVolume = 0
+
+
 
 
 # #def main():
@@ -86,6 +90,8 @@ class SoundInterface:
 
 # 		x = raw_input("What command? ")
 # main()
+def main():
+
 
 
 		
