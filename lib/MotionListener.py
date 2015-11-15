@@ -6,7 +6,7 @@ class MotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
-
+    operation_names = ['volumeUp','volumeDown','togglePlay','togglePower','restartCurrent']
     def on_init(self, controller):
         print "Initialized"
         #self.leapControl = SoundInterface()
@@ -40,12 +40,25 @@ class MotionListener(Leap.Listener):
             else:
                 command = "volumeDown"
         return command
+    def listToDictInit(self, list_keys):
+        dic = {}
+        for each in list_keys:
+            dic[list_keys] = 0
+        return dic
     
+    def getCommand(self,dic):
+        maximum = 0
+        for eachKey in dic:
+            if dic[eachKey] > maximum:
+                maximum = eachKey
+        return maximum
+
     def on_frame(self, controller):
         frame = controller.frame()
         nextCommand = ""
         start_time_frame = frame.timestamp
         
+        nextCommand = listToDictInit(operation_names)
         for hand in frame.hands:
 
             handType = "Left hand" if hand.is_left else "Right hand"
@@ -70,7 +83,9 @@ class MotionListener(Leap.Listener):
                     
                 else:
                     clockwiseness = "counterclockwise"
-                    self.leapControl.restartCurrent()
+                    #self.leapControl.restartCurrent()
+
+                    nextCommand['restartCurrent'] +=1
                     
                     print frame.timestamp
             #print clockwiseness
@@ -78,16 +93,21 @@ class MotionListener(Leap.Listener):
               
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-                nextCommand = self.commandSwipe(swipe.direction)
-                print nextCommand
-                #if nextCommand == "volumeDown":
-                   # self.leapControl.downVolume()
-               # elif nextCommand == "volumeUp":
-                   # self.leapControl.upVolume()
-               # elif nextCommand == "next":
+                #nextCommand = self.commandSwipe(swipe.direction)
+                #print nextCommand
+                if nextCommand == "volumeDown":
+                    #self.leapControl.downVolume()
+                    nextCommand['volumeDown']  +=1
+                elif nextCommand == "volumeUp":
+                    #self.leapControl.upVolume()
+                    nextCommand['volumeUp'] += 1
+                elif nextCommand == "next":
                     #self.leapControl.nextSong()
-              #  elif nextCommand == "last":
+                    nextCommand['nextSong'] += 1
+                elif nextCommand == "last":
                     #self.leapControl.prevSong()
+                    nextCommand['prevSong'] += 1
+
                 
                 #self.leapControl.nextSong()
                 #print " Key Tap id: %s,state: %s, position: %s, direction: %s" % (
@@ -106,9 +126,11 @@ class MotionListener(Leap.Listener):
             if gesture.type == Leap.Gesture.TYPE_KEY_TAP:
                 keytap = KeyTapGesture(gesture)
                 #self.leapControl.togglePlay()
+                nextCommand['togglePlay'] +=1
                 print "  Key Tap id: %d, %s, position: %s, direction: %s" % (
                         gesture.id, self.state_names[gesture.state],
                         keytap.position, keytap.direction )
+            print getCommand[nextCommand]
                 
 
     

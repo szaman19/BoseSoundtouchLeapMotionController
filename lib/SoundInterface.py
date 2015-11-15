@@ -3,14 +3,14 @@ import socket
 import xml.etree.ElementTree as ET
 
 IP_ADDRESS = "http://172.20.10.6:8090/"
-KEY_PRESS = '"<key state=\"press\" sender=\"Gabbo\">'
-KEY_RELEASE = '"<key state=\"release\" sender=\"Gabbo\">'
+KEY_PRESS = "<key state=\"press\" sender=\"Gabbo\">"
+KEY_RELEASE = "<key state=\"release\" sender=\"Gabbo\">"
 KEY_END_TAG = "</key>"
 
 class SoundInterface:
     def __init__(self):
         self.curVolume = 20
-        self.power = True
+        self.power = False
         self.play = True
 
     def upVolume(self, val=1):
