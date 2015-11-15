@@ -4,97 +4,71 @@ import socket
 import xml.etree.ElementTree as ET
 
 IP_ADDRESS = "http://172.20.10.6:8090/"
+KEY_PRESS = '"<key state=\"press\" sender=\"Gabbo\">'
+KEY_RELEASE = '"<key state=\"release\" sender=\"Gabbo\">'
+KEY_END_TAG = "</key>"
+
 class SoundInterface:
+    def __init__(self):
+        self.curVolume = 20
+        self.power = True
+        self.play = True
 
-	def upVolume(self):
-		newVol = self.curVolume + 10
-		return "<volume>"+str(newVol)+"</volume>"
+    def upVolume(self, val="1"):
+        newVol = "<volume>"+str(self.curVolume+(5*val))+"</volume>"
+        com = requests.post(IP_ADDRESS+'volume', newVol)
+        self.curVolume += 10
+    
+    def setVolume(self, newVol):
+        newVol = "<volume>"+str(newVol)+"</volume>"
+        com = requests.post(IP_ADDRESS+'volume', newVol)
 
-	def downVolume(self):
-		newVol = self.curVolume - 5
-		return "<volume>"+str(newVol)+"</volume>"
-	def nextSong():
-		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">NEXT_TRACK</key>")
-		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">NEXT_TRACK</key>")
+    def downVolume(self,val="1"):
+        newVol = "<volume>"+str(self.curVolume-(5*val))+"</volume>"
+        com = requests.post(IP_ADDRESS+'volume', newVol)
+        self.curVolume -=10
+        
+    def nextSong(self):
+        commandOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"NEXT_TRACK"+KEY_END_TAG)
+        commandTwo = requests.post(IP_ADDRESS+'key',KEY_RELEASE+"NEXT_TRACK"+KEY_END_TAG)
 
-		#"<key state=\"release\" sender=\"Gabbo\">NEXT_TRACK</key>"
-	def playSong():
-		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">PLAY</key>")
-		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">PLAY</key>")
+    def prevSong(self):
+        commandPrevOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"PREV_TRACK"+KEY_END_TAG)
+        commandPrevTwo = requests.post(IP_ADDRESS+'key',KEY_RELEASE+"PREV_TRACK"+KEY_END_TAG)
 
-	def pauseSong():
-		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">PAUSE</key>")
-		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">PAUSE</key>")
+    def restartCurrent(self):
+        self.nextSong()
+        self.prevSong()
 
-	def stopSong():
-		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">STOP</key>")
-		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">STOP</key>")
+    def playSong(self):
+        commandOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"PLAY"+KEY_END_TAG)
+        commandTwo = requests.post(IP_ADDRESS+'key',KEY_RELEASE+"PLAY"+KEY_END_TAG)
+        self.play = True
 
-	def turnOff():
-		commandOne = requests.post(IP_ADDRESS+'key',"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
-		commandTwo = requests.post(IP_ADDRESS+'key',"<key state=\"release\" sender=\"Gabbo\">POWER</key>")
-	
-	def listSources():
-		commandOne = requests.get(IP_ADDRESS+'sources')#,"<key state=\"press\" sender=\"Gabbo\">POWER</key>")
-		return commandOne.text 
-	def __init__(self):
-		self.curVolume = 0
+    def pauseSong(self):
+        commandOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"PAUSE"+KEY_END_TAG)
+        commandTwo = requests.post(IP_ADDRESS+'key',KEY_RELEASE+"PAUSE"+KEY_END_TAG)
+        self.play = False
 
+    def togglePlay(self):
+        if self.play:
+            self.pauseSong()
+        else:
+            self.playSong()
 
+    def stopSong(self):
+        commandOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"STOP"+KEY_END_TAG)
+        commandTwo = requests.post(IP_ADDRESS+'key',KEY_RELEASE+"STOP"+KEY_END_TAG)
+        self.play = False
 
-
-# #def main():
-# 	#ip = socket.gethostbyname(socket.gethostname())
-# 	#print([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
-
-# 	h2 = requests.get('http://172.20.10.6:8090/trackInfo')
-# 	print h2.text
-# 	print "\n \n"
-# 	root = ET.fromstring(h2.text)
-# 	for child in root:
-# 		print child.tag, child.attrib
-# 	#h3 = requests.post('http://172.20.10.6:8090/volume', setVolume(0))
-# 	#print h3.text
-	
-# 	curVolume = 10
-# 	x = raw_input("What command ?")
-# 	while x:
-# 		if x == "up":
-
-# 			h3 = requests.post('http://172.20.10.6:8090/volume', upVolume(curVolume))
-# 			print h3.text
-# 			curVolume += 10
-# 		elif x == "down":
-# 			h3 = requests.post('http://172.20.10.6:8090/volume', downVolume(curVolume))
-# 			print h3.text
-# 			curVolume -= 10
-# 		elif x == "next":
-# 			#h3 = requests.post('http://172.20.10.6:8090/volume', setVolume(curVolume))
-# 			#print h3.text
-# 			nextSong()
-# 		elif x == "play":
-# 			playSong()
-# 		elif x == "pause":
-# 			pauseSong()
-# 		elif x == "off":
-# 			turnOff()
-# 		elif x == "stopSong":
-# 			stopSong()
-# 		elif x =="source":
-# 			print(listSources())
-# 		else:
-# 			print "incorrect input"
-# 			x = raw_input("What command? ")
-
-
-
-# 		x = raw_input("What command? ")
-# main()
-def main():
-
-
-
-		
-
-
-##print h2.text
+    def togglePower(self):
+        commandOne = requests.post(IP_ADDRESS+'key',KEY_PRESS+"POWER"+KEY_END_TAG)
+        commandTwo = requests.post(IP_ADDRESS+'key',KEY_PRESSS+"POWER"+KEY_END_TAG)
+        if self.power:
+            self.power = False
+        else:
+            self.power = True
+    
+    def listSources(self):
+        commandOne = requests.get(IP_ADDRESS+'sources')
+        return commandOne.text
